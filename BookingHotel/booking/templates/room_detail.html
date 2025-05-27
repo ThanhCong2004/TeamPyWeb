@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Đơn đặt phòng của bạn{% endblock %}
+{% block content %}
+<h2>Đơn đặt phòng của bạn</h2>
+{% for b in bookings %}
+    <div class="booking">
+        <p>Phòng: {{ b.room.room_type }}</p>
+        <p>Khách sạn: {{ b.room.hotel.name }}</p>
+        <p>Ngày: {{ b.check_in }} đến {{ b.check_out }}</p>
+        <p>Tổng: {{ b.total }}</p>
+        {% if b.payment %}
+            <p>Đã thanh toán: {{ b.payment.amount }} qua {{ b.payment.payment_method }}</p>
+        {% else %}
+            <a href="{% url 'payment' b.booking_id %}">Thanh toán</a>
+        {% endif %}
+    </div>
+{% endfor %}
+{% endblock %}

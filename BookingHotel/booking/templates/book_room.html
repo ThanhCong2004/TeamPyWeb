@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Book Room</h2>
+<p><strong>Hotel:</strong> {{ room.hotel.name }}</p>
+<p><strong>Room:</strong> {{ room.room_type }} - ${{ room.price_per_night }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label>Check-in:</label>
+        <input type="date" name="check_in" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Check-out:</label>
+        <input type="date" name="check_out" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-success">Book Now</button>
+</form>
+{% endblock %}

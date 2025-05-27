@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Danh sách phòng{% endblock %}
+{% block content %}
+<h2>Tìm kiếm phòng khách sạn</h2>
+<form method="get" class="search-form">
+    {{ form.as_p }}
+    <button type="submit" class="btn-payment">Tìm kiếm</button>
+</form>
+<hr>
+{% for room in rooms %}
+    <div class="room">
+        <h3>{{ room.hotel.name }} - {{ room.room_type }}</h3>
+        <p>Giá: ${{ room.price_per_night }}</p>
+        <p>Sức chứa: {{ room.max_occupancy }} người</p>
+        <p>Trạng thái: {{ room.status }}</p>
+    </div>
+{% empty %}
+    <p>Không tìm thấy phòng phù hợp.</p>
+{% endfor %}
+
+<!--<h2>Danh sách phòng</h2>-->
+<!--{% for room in rooms %}-->
+<!--    <div class="room">-->
+<!--        <h3>{{ room.room_type }} - {{ room.hotel.name }}</h3>-->
+<!--        <p>Giá: {{ room.price_per_night }} / đêm</p>-->
+<!--        <p>Trạng thái: {{ room.status }}</p>-->
+<!--        <a href="{% url 'room_detail' room.room_id %}">Xem chi tiết</a>-->
+<!--    </div>-->
+<!--{% endfor %}-->
+<!--{% endblock %}-->

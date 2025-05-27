@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Thông tin người dùng{% endblock %}
+{% block content %}
+<h2>Thông tin người dùng</h2>
+<p>Họ tên: {{ user.name }}</p>
+<p>Email: {{ user.email }}</p>
+<p>Số điện thoại: {{ user.phone }}</p>
+{% endblock %}
