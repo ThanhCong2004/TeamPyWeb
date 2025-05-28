@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Chi tiết phòng{% endblock %}
+{% block content %}
+
+<h2>{{ room.hotel.name }} - {{ room.room_type }}</h2>
+<p>Giá mỗi đêm: ${{ room.price_per_night }}</p>
+<p>Sức chứa tối đa: {{ room.max_occupancy }} người</p>
+<p>Trạng thái: {{ room.status }}</p>
+
+<h3>Hình ảnh phòng:</h3>
+{% if pictures %}
+    {% for pic in pictures %}
+    <img src="{{ pic.picture_url }}" alt="Hình ảnh phòng" style="max-width: 300px; margin: 10px 0;">
+    {% endfor %}
+{% else %}
+    <p>Không có hình ảnh phòng.</p>
+{% endif %}
+<br>
+<a href="{% url 'home' %}" class="btn-payment">Quay lại danh sách phòng</a>
+{% endblock %}
