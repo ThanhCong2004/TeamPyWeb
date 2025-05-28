@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Đăng nhập{% endblock %}
+{% block content %}
+<h2>Đăng nhập</h2>
+<form method="post">
+    {% csrf_token %}
+    <label>Email:</label>
+    <input type="text" name="email"><br>
+    <label>Mật khẩu:</label>
+    <input type="password" name="password"><br>
+    <button type="submit">Đăng nhập</button>
+</form>
+{% if error %}
+<p style="color:red">{{ error }}</p>
+{% endif %}
+{% endblock %}
