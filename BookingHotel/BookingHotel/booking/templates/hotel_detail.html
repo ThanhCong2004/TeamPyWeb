@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Chi tiết khách sạn{% endblock %}
+<link rel="stylesheet" href="{% static 'css/hotel_detail.css' %}">
+{% block content %}
+
+<h2>{{ hotel.name }}</h2>
+<p><strong>Địa chỉ:</strong> {{ hotel.address }}</p>
+<p><strong>Điện thoại:</strong> {{ hotel.phone }}</p>
+<p><strong>Email:</strong> {{ hotel.email }}</p>
+<p><strong>Mô tả:</strong> {{ hotel.description }}</p>
+
+<hr>
+<h3>Danh sách phòng</h3>
+{% for room in rooms %}
+    <div class="room-block">
+        <h4><a href="{% url 'room_detail' room.room_id %}">Phòng {{ room.room_number }} - {{ room.room_type }}</a></h4>
+        <p><strong>Giá:</strong> ${{ room.price_per_night }}  / đêm</p>
+        <p><strong>Sức chứa:</strong> {{ room.max_occupancy }} người</p>
+        <p><strong>Trạng thái:</strong> {{ room.status }}</p>
+    </div>
+  <br>
+{% empty %}
+    <p>Không có phòng nào trong khách sạn này.</p>
+{% endfor %}
+
+{% endblock %}

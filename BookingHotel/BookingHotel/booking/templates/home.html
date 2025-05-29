@@ -1,24 +1,25 @@
 {% extends 'base.html' %}
-{% block title %}Danh sách phòng{% endblock %}
+{% load static %}
+{% block title %}Danh sách khách sạn{% endblock %}
 {% block content %}
-<h2>Tìm kiếm phòng khách sạn</h2>
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+<h2>Tìm kiếm khách sạn</h2>
 <form method="get" class="search-form">
     {{ form.as_p }}
     <button type="submit" class="btn-payment">Tìm kiếm</button>
 </form>
+<br>
 <hr>
-{% for room in rooms %}
-    <div class="room">
-        <h3>
-            <a href="{% url 'room_detail' room.room_id %}">
-                {{ room.hotel.name }} - {{ room.room_type }}
-            </a>
-        </h3>
-        <p>Giá: ${{ room.price_per_night }}</p>
-        <p>Sức chứa: {{ room.max_occupancy }} người</p>
-        <p>Trạng thái: {{ room.status }}</p>
-    </div>
+{% for hotel in hotels %}
+        <div class="hotel-info">
+            <h3><a href="{% url 'hotel_detail' hotel.hotel_id %}">{{ hotel.name }}</a></h3>
+            <p><strong>Địa chỉ:</strong> {{ hotel.address }}</p>
+            <p><strong>Điện thoại:</strong> {{ hotel.phone }}</p>
+            <p><strong>Email:</strong> {{ hotel.email }}</p>
+            <p><strong>Mô tả:</strong> {{ hotel.description }}</p>
+        </div>
 {% empty %}
-    <p>Không tìm thấy phòng phù hợp.</p>
+    <p>Không tìm thấy khách sạn phù hợp.</p>
 {% endfor %}
 {% endblock %}

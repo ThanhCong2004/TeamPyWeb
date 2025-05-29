@@ -1,13 +1,17 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import User, Room, Booking, Payment, RoomPicture
+from .models import Hotel, User, Room, Booking, Payment, RoomPicture
 from django.contrib import messages
 from django.contrib.auth import logout
 from .forms import SearchForm
+from django.utils import timezone
+
 
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+
 # Đăng nhập
 def login_view(request):
     if request.method == 'POST':
@@ -21,35 +25,42 @@ def login_view(request):
             messages.error(request, "Sai thông tin đăng nhập")
     return render(request, 'login.html')
 
-# Trang chủ - hiện tất cả phòng
+
+# Trang chủ - hiện tất cả khách sạn
 def home(request):
-    # rooms = Room.objects.all()
-    # return render(request, 'home.html', {'rooms': rooms})
-    rooms = Room.objects.select_related('hotel').all()
+    hotels = Hotel.objects.all()
     form = SearchForm(request.GET or None)
 
     if form.is_valid():
-        keyword = form.cleaned_data.get('keyword')
-        max_occupancy = form.cleaned_data.get('max_occupancy')
-        status = form.cleaned_data.get('status')
+        keyword = form.cleaned_data.get('keyword', '').strip().lower()
+        city = form.cleaned_data.get('city', '').strip().lower()
 
+        # Lọc theo tên khách sạn nếu có keyword
         if keyword:
-            rooms = rooms.filter(
-                room_type__icontains=keyword
-            ) | rooms.filter(
-                hotel__name__icontains=keyword
-            )
+            hotels = hotels.filter(name__icontains=keyword)
 
-        if max_occupancy:
-            rooms = rooms.filter(max_occupancy__gte=max_occupancy)
-
-        if status:
-            rooms = rooms.filter(status__icontains=status)
+        # Lọc theo thành phố nếu có city
+        if city:
+            filtered_hotels = []
+            for hotel in hotels:
+                parts = hotel.address.split(',')
+                if len(parts) > 1 and parts[-1].strip().lower() == city:
+                    filtered_hotels.append(hotel)
+            hotels = filtered_hotels
 
     return render(request, 'home.html', {
-        'rooms': rooms,
+        'hotels': hotels,
         'form': form,
     })
+
+
+#Các phòng trong khách sạn
+def hotel_detail(request, hotel_id):
+    hotel = Hotel.objects.get(hotel_id=hotel_id)
+    rooms = Room.objects.filter(hotel=hotel)
+    return render(request, 'hotel_detail.html', {'hotel': hotel,
+        'rooms': rooms,  })
+
 
 # Thông tin người dùng
 def user_profile(request):
@@ -84,10 +95,18 @@ def my_bookings(request):
 
 # Thanh toán
 def make_payment(request, booking_id):
+    booking = Booking.objects.get(booking_id=booking_id)
+
     if request.method == 'POST':
         method = request.POST['payment_method']
-        booking = Booking.objects.get(booking_id=booking_id)
-        Payment.objects.create(booking=booking, payment_method=method, payment_date='2025-05-26', amount=booking.total)
+        Payment.objects.create(
+            booking=booking,
+            payment_method=method,
+            payment_date=timezone.now().date(),
+            amount=booking.total
+        )
         return redirect('my_bookings')
-    return render(request, 'make_payment.html', {'booking_id': booking_id})
 
+    return render(request, 'make_payment.html', {
+        'booking': booking
+    })
