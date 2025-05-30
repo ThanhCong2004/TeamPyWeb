@@ -1,23 +1,36 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Chi tiết khách sạn{% endblock %}
-<link rel="stylesheet" href="{% static 'css/hotel_detail.css' %}">
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/hotel_detail.css' %}">
 
-<h2>{{ hotel.name }}</h2>
-<p><strong>Địa chỉ:</strong> {{ hotel.address }}</p>
-<p><strong>Điện thoại:</strong> {{ hotel.phone }}</p>
-<p><strong>Email:</strong> {{ hotel.email }}</p>
-<p><strong>Mô tả:</strong> {{ hotel.description }}</p>
+<div>
+    <h2>{{ hotel.name }}</h2>
+    <p><strong>📍 Địa chỉ:</strong> {{ hotel.address }}</p>
+    <p><strong>📞 Điện thoại:</strong> {{ hotel.phone }}</p>
+    <p><strong>📧 Email:</strong> {{ hotel.email }}</p>
+    <p><strong>ℹ️ Mô tả:</strong> {{ hotel.description }}</p>
+</div>
+
+<h3>Hình ảnh khách sạn:</h3>
+<div class="hotel-image-wrapper">
+    {% if pictures %}
+        {% for pic in pictures %}
+            <img src="{{ pic.image_url }}" alt="Ảnh khách sạn" class="hotel-image-full">
+        {% endfor %}
+    {% else %}
+        <p>Không có ảnh khách sạn.</p>
+    {% endif %}
+</div>
+
 
 <hr>
 <h3>Danh sách phòng</h3>
 {% for room in rooms %}
     <div class="room-block">
         <h4><a href="{% url 'room_detail' room.room_id %}">Phòng {{ room.room_number }} - {{ room.room_type }}</a></h4>
-        <p><strong>Giá:</strong> ${{ room.price_per_night }}  / đêm</p>
-        <p><strong>Sức chứa:</strong> {{ room.max_occupancy }} người</p>
-        <p><strong>Trạng thái:</strong> {{ room.status }}</p>
+        <p><strong>💰 Giá:</strong> ${{ room.price_per_night }}  / đêm</p>
+        <p><strong>🧍‍♂️ Sức chứa:</strong> {{ room.max_occupancy }} người</p>
+        <p><strong>📶 Trạng thái:</strong> {{ room.status }}</p>
     </div>
   <br>
 {% empty %}
