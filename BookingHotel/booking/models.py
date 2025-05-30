@@ -74,7 +74,7 @@ class Review(models.Model):
 
 class Picture(models.Model):
     picture_id = models.IntegerField(primary_key=True)
-    room = models.ForeignKey(Room, on_delete=models.DO_NOTHING)
+    room = models.ForeignKey(Room, on_delete=models.DO_NOTHING, db_column='room_id')
     image_url = models.CharField(max_length=200)
     description = models.CharField(max_length=300)
 
@@ -83,9 +83,9 @@ class Picture(models.Model):
         db_table = 'PICTURES'
 
 class RoomPicture(models.Model):
-    picture_id = models.IntegerField()
-    room = models.ForeignKey(Room, on_delete=models.DO_NOTHING)
-    picture_url = models.CharField(max_length=200)
+    picture_id = models.IntegerField(primary_key=True)
+    room = models.ForeignKey('Room', on_delete=models.DO_NOTHING, db_column='room_id')
+    picture_url = models.ImageField(max_length=200)
     number = models.IntegerField()
 
     class Meta:

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Thanh toán</h2>
+
+<p><strong>Khách sạn:</strong> {{ booking.room.hotel.name }}</p>
+<p><strong>Phòng:</strong> {{ booking.room.room_type }}</p>
+<p><strong>Check-in:</strong> {{ booking.check_in }}</p>
+<p><strong>Check-out:</strong> {{ booking.check_out }}</p>
+<p><strong>Tổng tiền:</strong> ${{ booking.total }} </p>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="payment_method">Phương thức thanh toán:</label>
+    <select name="payment_method" id="payment_method" required>
+        <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+        <option value="Chuyển khoản">Chuyển khoản</option>
+        <option value="Tiền mặt">Tiền mặt</option>
+    </select>
+    <br><br>
+    <button type="submit" class="btn-payment">Xác nhận thanh toán</button>
+</form>
+{% endblock %}
