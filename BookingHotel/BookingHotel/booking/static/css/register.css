@@ -1,0 +1,70 @@
+/* Đăng ký người dùng */
+.register-form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.register-form h2 {
+    text-align: center;
+    color: #003366;
+    margin-bottom: 30px;
+}
+
+.register-form form p {
+    margin-bottom: 20px;
+}
+
+.register-form label {
+    display: block;
+    font-weight: 600;
+    color: #004080;
+    margin-bottom: 6px;
+}
+
+.register-form input[type="text"],
+.register-form input[type="email"],
+.register-form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+}
+
+.register-form input:focus {
+    outline: none;
+    border-color: #0073e6;
+    background-color: #ffffff;
+}
+
+.register-form .btn-success {
+    width: 100%;
+    padding: 14px;
+    background-color: #0073e6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.register-form .btn-success:hover {
+    background-color: #0073e6;
+}
+
+/* Thông báo lỗi */
+.register-form .errorlist {
+    color: #d9534f;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    list-style-type: none;
+    padding-left: 0;
+}

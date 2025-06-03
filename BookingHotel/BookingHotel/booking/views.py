@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Hotel, User, Room, Booking, Payment, RoomPicture
+from .models import Hotel, User, Room, Booking, Payment, RoomPicture, Picture, Review
 from django.contrib import messages
 from django.contrib.auth import logout
-from .forms import SearchForm
+from .forms import SearchForm, RegisterForm, ReviewForm
 from django.utils import timezone
+from datetime import datetime
+from django.core.paginator import Paginator #Phân trang home
+from django.db.models import Max
+from django.utils.timezone import now
 
 
 def logout_view(request):
@@ -48,6 +52,10 @@ def home(request):
                     filtered_hotels.append(hotel)
             hotels = filtered_hotels
 
+    paginator = Paginator(hotels, 5)  # 5 khách sạn mỗi trang
+    page_number = request.GET.get('page')
+    hotels = paginator.get_page(page_number)
+
     return render(request, 'home.html', {
         'hotels': hotels,
         'form': form,
@@ -58,8 +66,10 @@ def home(request):
 def hotel_detail(request, hotel_id):
     hotel = Hotel.objects.get(hotel_id=hotel_id)
     rooms = Room.objects.filter(hotel=hotel)
-    return render(request, 'hotel_detail.html', {'hotel': hotel,
-        'rooms': rooms,  })
+    pictures = Picture.objects.filter(hotel=hotel)
+
+    return render(request, 'hotel_detail.html',
+                  {'hotel': hotel, 'rooms': rooms,  'pictures': pictures })
 
 
 # Thông tin người dùng
@@ -72,20 +82,98 @@ def user_profile(request):
 def room_detail(request, room_id):
     room = Room.objects.get(room_id=room_id)
     pictures = RoomPicture.objects.filter(room=room)
-    return render(request, 'room_detail.html', {'room': room, 'pictures': pictures})
+    reviews = Review.objects.filter(room=room).select_related('user').order_by('-created_at')
+
+    # Form review
+    user_id = request.session.get('user_id')
+    user = User.objects.filter(user_id=user_id).first() if user_id else None
+    if request.method == 'POST' and user:
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.room = room
+            review.user = user
+            review.created_at = now()
+            # Sinh review_id
+            max_id = Review.objects.aggregate(Max('review_id'))['review_id__max'] or 0
+            review.review_id = max_id + 1
+            review.save()
+            return redirect('room_detail', room_id=room_id)
+    else:
+        form = ReviewForm()
+
+
+    return render(request, 'room_detail.html',
+                  {'room': room, 'pictures': pictures,
+                   'reviews': reviews, 'form': form, 'user': user})
 
 # Đặt phòng
 def book_room(request, room_id):
-    if request.method == 'POST':
-        check_in = request.POST['check_in']
-        check_out = request.POST['check_out']
-        room = Room.objects.get(room_id=room_id)
-        user = User.objects.get(user_id=request.session.get('user_id'))
-        total = room.price_per_night * 2  # Ví dụ tính 2 ngày
-        Booking.objects.create(user=user, room=room, check_in=check_in, check_out=check_out, total=total)
-        return redirect('my_bookings')
     room = Room.objects.get(room_id=room_id)
+
+    if request.method == 'POST':
+        # Lấy ngày từ form
+        check_in = request.POST.get('check_in')
+        check_out = request.POST.get('check_out')
+
+        # Kiểm tra đăng nhập
+        user_id = request.session.get('user_id')
+        if not user_id:
+            return redirect('login')
+
+        user = User.objects.get(user_id=user_id)
+
+        # Chuyển thành object date
+        try:
+            check_i = datetime.strptime(check_in, "%Y-%m-%d").date()
+            check_o = datetime.strptime(check_out, "%Y-%m-%d").date()
+        except ValueError:
+            return render(request, 'book_room.html', {
+                'room': room,
+                'error': 'Vui lòng nhập đúng định dạng ngày.'
+            })
+
+        # Kiểm tra logic ngày
+        nights = (check_o - check_i).days
+        if nights <= 0:
+            return render(request, 'book_room.html', {
+                'room': room,
+                'error': 'Ngày trả phải sau ngày nhận phòng.'
+            })
+
+        # Kiểm tra xem đã có người đặt trong khoảng ngày đó chưa
+        overlap = Booking.objects.filter(
+            room=room,
+            check_in__lt=check_o,   # người khác check_in trước khi mình check_out
+            check_out__gt=check_i   # người khác check_out sau khi mình check_in
+        ).exists()
+
+        if overlap:
+            messages.error(request, "❌ Phòng này đã được đặt trong khoảng thời gian bạn chọn.")
+            return redirect('room_detail', room_id=room.room_id)
+
+        # Tính tổng tiền
+        total = room.price_per_night * nights
+
+        # Tự sinh booking_id
+        max_id = Booking.objects.aggregate(Max('booking_id'))['booking_id__max'] or 0
+        new_id = max_id + 1
+
+        # Lưu booking mới
+        Booking.objects.create(
+            booking_id=new_id,
+            user=user,
+            room=room,
+            check_in=check_i,
+            check_out=check_o,
+            total=total
+        )
+
+        messages.success(request, "🎉 Đặt phòng thành công!")
+        return redirect('my_bookings')
+
     return render(request, 'book_room.html', {'room': room})
+
 
 # Xem các phòng đã đặt
 def my_bookings(request):
@@ -110,3 +198,21 @@ def make_payment(request, booking_id):
     return render(request, 'make_payment.html', {
         'booking': booking
     })
+
+
+def register_view(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            # Tự tạo user_id mới (ví dụ: max + 1)
+            latest_user = User.objects.order_by('-user_id').first()
+            next_id = latest_user.user_id + 1 if latest_user else 1
+
+            user = form.save(commit=False)
+            user.user_id = next_id
+            user.save()
+            messages.success(request, "Đăng ký thành công!")
+            return redirect('login')  # chuyển hướng sau khi đăng ký
+    else:
+        form = RegisterForm()
+    return render(request, 'register.html', {'form': form})

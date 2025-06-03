@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Thông tin người dùng{% endblock %}
 {% block content %}
-<h2>Thông tin người dùng</h2>
-<p>Họ tên: {{ user.name }}</p>
-<p>Email: {{ user.email }}</p>
-<p>Số điện thoại: {{ user.phone }}</p>
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<div class="profile-container">
+    <h2>Thông tin người dùng</h2>
+    <p>Họ tên: {{ user.name }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Số điện thoại: {{ user.phone }}</p>
+</div>
 {% endblock %}

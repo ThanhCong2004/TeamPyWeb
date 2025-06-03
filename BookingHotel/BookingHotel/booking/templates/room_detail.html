@@ -1,22 +1,67 @@
 {% extends 'base.html' %}
-{% block title %}Chi tiết phòng{% endblock %}
+{% load static %}
 {% block content %}
-
-<h2>{{ room.hotel.name }} </h2>
+<link rel="stylesheet" href="{% static 'css/room_detail.css' %}">
+<div class="room-detail-container">
+<h2>{{ room.hotel.name }}</h2>
 <h2>Phòng {{ room.room_number }} - {{ room.room_type }}</h2>
-<p>Giá mỗi đêm: ${{ room.price_per_night }}</p>
-<p>Sức chứa tối đa: {{ room.max_occupancy }} người</p>
-<p>Trạng thái: {{ room.status }}</p>
-<p>Mô tả: {{ room.description }}</p>
+<p>💰 Giá mỗi đêm: ${{ room.price_per_night }}</p>
+<p>🧍‍♂️ Sức chứa tối đa: {{ room.max_occupancy }} người</p>
+<p>ℹ️ Mô tả: {{ room.description }}</p>
 
 <h3>Hình ảnh phòng:</h3>
-{% if pictures %}
-    {% for pic in pictures %}
-    <img src="{{ pic.picture_url }}" alt="Hình ảnh phòng" style="max-width: 300px; margin: 10px 0;">
-    {% endfor %}
-{% else %}
-    <p>Không có hình ảnh phòng.</p>
-{% endif %}
-<br>
-<a href="{% url 'home' %}" class="btn-payment">Quay lại danh sách phòng</a>
+    {% if pictures %}
+        {% for pic in pictures %}
+            <img src="{{ pic.picture_url }}" alt="Hình ảnh phòng" style="max-width: 300px; margin: 10px 0;">
+        {% endfor %}
+    {% else %}
+        <p>Không có hình ảnh phòng.</p>
+    {% endif %}
+<hr>
+    <h3>Lịch đã đặt:</h3>
+        <ul>
+            {% for booking in room.booking_set.all %}
+                <li>{{ booking.check_in }} → {{ booking.check_out }}</li>
+            {% empty %}
+                <li>Chưa có lịch đặt nào</li>
+            {% endfor %}
+        </ul>
+<hr>
+
+    <div class="review-section">
+        <h3>Đánh giá từ khách hàng</h3>
+        {% if reviews %}
+            <ul class="review-list">
+            {% for review in reviews %}
+                <li>
+                    <strong>{{ review.user.name }}</strong> – {{ review.rating }}/5 ⭐<br>
+                    {{ review.comment }}<br>
+                    <small><i>{{ review.created_at|date:"d/m/Y H:i" }}</i></small>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Chưa có đánh giá nào cho phòng này.</p>
+        {% endif %}
+<hr>
+        <div class="review-form">
+            <h3>Viết đánh giá của bạn</h3>
+            {% if user %}
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Gửi đánh giá</button>
+                </form>
+            {% else %}
+                <p>Bạn cần <a href="{% url 'login' %}">Đăng nhập</a> để viết đánh giá.</p>
+            {% endif %}
+        </div>
+    </div>
+<hr>
+
+    <div class="button-group">
+        <a href="{% url 'book_room' room.room_id %}" class="btn-book">Đặt phòng ngay</a>
+        <a href="{% url 'home' %}" class="btn-book btn-back">← Quay lại</a>
+    </div>
+</div>
 {% endblock %}

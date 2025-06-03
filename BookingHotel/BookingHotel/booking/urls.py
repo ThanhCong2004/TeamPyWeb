@@ -11,4 +11,5 @@ urlpatterns = [
     path('my_bookings/', views.my_bookings, name='my_bookings'),
     path('pay/<int:booking_id>/', views.make_payment, name='make_payment'),
     path('logout/', views.logout_view, name='logout'),
+    path('register/', views.register_view, name='register'),
 ]

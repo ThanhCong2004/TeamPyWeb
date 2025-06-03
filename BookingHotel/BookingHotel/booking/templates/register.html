@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-<h2>Register</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Register</button>
-</form>
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+
+<div class="register-form">
+    <h2>Register</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-success">Đăng ký</button>
+    </form>
+</div>
 {% endblock %}

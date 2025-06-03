@@ -1,19 +1,32 @@
 {% extends 'base.html' %}
-{% block content %}
-<h2>Book Room</h2>
-<p><strong>Hotel:</strong> {{ room.hotel.name }}</p>
-<p><strong>Room:</strong> {{ room.room_type }} - ${{ room.price_per_night }}</p>
+{% load static %}
+{% block title %}Đặt phòng{% endblock %}
 
-<form method="post">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label>Check-in:</label>
-        <input type="date" name="check_in" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Check-out:</label>
-        <input type="date" name="check_out" class="form-control" required>
-    </div>
-    <button type="submit" class="btn btn-success">Book Now</button>
-</form>
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/book_room.css' %}">
+
+<div class="book-room-container">
+    <h2>Đặt Phòng</h2>
+
+    <p><strong>Khách sạn:</strong> {{ room.hotel.name }}</p>
+    <p><strong>Phòng:</strong> {{ room.room_number }} {{ room.room_type }} - ${{ room.price_per_night }}/đêm</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="check_in">Ngày nhận phòng:</label>
+            <input type="date" name="check_in" id="check_in" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="check_out">Ngày trả phòng:</label>
+            <input type="date" name="check_out" id="check_out" required>
+        </div>
+
+        <div class="button-group">
+            <a href="{% url 'room_detail' room.room_id %}" class="btn-back">← Quay lại</a>
+            <button type="submit" class="btn-book">Đặt ngay</button>
+        </div>
+    </form>
+</div>
 {% endblock %}

@@ -7,16 +7,16 @@
 {% if bookings %}
 <table class="table">
     <tr>
-        <th>Room</th>
         <th>Hotel</th>
+        <th>Room</th>
         <th>Check-in</th>
         <th>Check-out</th>
         <th>Total</th>
     </tr>
     {% for booking in bookings %}
     <tr>
-        <td>{{ booking.room.room_type }}</td>
         <td>{{ booking.room.hotel.name }}</td>
+        <td>{{ booking.room.room_number }} - {{ booking.room.room_type }} </td>
         <td>{{ booking.check_in }}</td>
         <td>{{ booking.check_out }}</td>
         <td>${{ booking.total }}</td>
