@@ -1,0 +1,93 @@
+/* Container styling */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f5f6fa;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    padding: 20px;
+    margin: 0;
+    font-size: 24px;
+    color: #2c3e50;
+}
+
+/* Table styling */
+.table {
+    width: 100%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table th, .table td {
+    padding: 15px 20px;
+    text-align: left;
+}
+
+.table th {
+    background-color: #f0f2f5;
+    font-weight: 600;
+    color: #34495e;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.table tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.table td {
+    color: #555;
+    border-bottom: 1px solid #eee;
+}
+
+/* Message when no bookings */
+p {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 18px;
+    background-color: #ffffff;
+    width: 80%;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* Cancel Button Styling */
+.btn-cancel {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #c0392b;
+}
+
+/* Payment Button Styling */
+.btn-payment {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 20px auto;
+    display: block;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-payment:hover {
+    background-color: #1e8449;
+}
