@@ -78,9 +78,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'mssql',
         'NAME': 'Hotel',
-        'USER': 'cong',
-        'PASSWORD': '123456',
-        'HOST': 'DESKTOP-VPBQJ67\SQLEXPRESS',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
         'PORT': '',  # mặc định là 1433
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
