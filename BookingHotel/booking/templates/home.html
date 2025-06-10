@@ -83,9 +83,10 @@
                     {% with hotel.room_set.all|first as first_room %}
                         {% if first_room %}
                             <div class="hotel-price">
-                                <span  class="price-unit">Từ</span>
-                                <span class="price-from">{{ first_room.price_per_night|floatformat:0 }}$</span>
-                                <span class="price-unit">/đêm</span>
+                                <span  class="price-unit" style="color: white">Từ</span>
+
+                                <span class="price-from" style="color: black">{{ first_room.price_per_night|floatformat:0 }}$</span>
+                                <span class="price-unit" style="color: white">/đêm</span>
                             </div>
                         {% endif %}
                     {% endwith %}

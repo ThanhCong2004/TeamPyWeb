@@ -454,7 +454,7 @@ a {
     gap: 0.4rem; /* Giảm nhẹ khoảng cách */
     margin-top: -1rem; /* Giảm khoảng cách trên */
 
-    background-color: var(--background-dark); /* Sử dụng biến màu nền xám nhạt */
+    background-color: #3498db; /* Sử dụng biến màu nền xám nhạt */
     padding: 0.4rem 0.8rem; /* Thêm khoảng đệm bên trong */
     border-radius: var(--border-radius-sm); /* Bo tròn góc */
     width: fit-content; /* Giúp khối nền chỉ rộng bằng nội dung */
