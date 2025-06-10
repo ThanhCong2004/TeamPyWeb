@@ -1,41 +1,171 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}Đơn đặt của tôi{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/my_booking.css' %}">
+<div class="container">
+    <div class="bookings-container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">
+                <i class="fas fa-home"></i>
+                Trang chủ
+            </a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Đơn đặt phòng của tôi</span>
+        </nav>
 
-<h2>My Bookings</h2>
-{% if bookings %}
-<table class="table">
-    <tr>
-        <th>Hotel</th>
-        <th>Room</th>
-        <th>Check-in</th>
-        <th>Check-out</th>
-        <th>Total</th>
-        <th></th>
-    </tr>
-    {% for booking in bookings %}
-    <tr>
-        <td>{{ booking.room.hotel.name }}</td>
-        <td>{{ booking.room.room_number }} - {{ booking.room.room_type }} </td>
-        <td>{{ booking.check_in }}</td>
-        <td>{{ booking.check_out }}</td>
-        <td>${{ booking.total }}</td>
-          <td>
-            <form method="post" action="{% url 'cancel_booking' booking.booking_id %}" onsubmit="return confirm('Bạn có chắc muốn huỷ đặt phòng này không?');">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-content">
+                <h1>
+                    <i class="fas fa-calendar-check"></i>
+                    Lịch sử đặt phòng
+                </h1>
+                <p>Quản lý và theo dõi tất cả đơn đặt phòng của bạn</p>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'home' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Đặt phòng mới
+                </a>
+            </div>
+        </div>
+
+        <!-- Bookings Content -->
+        <div class="bookings-content">
+            {% if bookings %}
+                <div class="bookings-list">
+                    {% for booking in bookings %}
+                    <div class="booking-card">
+                        <div class="booking-image">
+                            <img src="{% static 'images/default-hotel.jpg' %}" alt="{{ booking.room.hotel.name }}">
+
+                            {% if booking.is_paid %}
+                                <div class="booking-status status-completed">
+                                    <i class="fas fa-check-circle"></i>
+                                    Đã thanh toán
+                                </div>
+                            {% else %}
+                                <div class="booking-status status-pending">
+                                    <i class="fas fa-clock"></i>
+                                    Chờ thanh toán
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="booking-details">
+                            <div class="booking-header">
+                                <h3>{{ booking.room.hotel.name }} <br>
+                                   Phòng {{ booking.room.room_number }}</h3>
+                                <div class="booking-id">
+                                    <span>Mã: #{{ booking.booking_id }}</span>
+                                </div>
+                            </div>
+
+                            <div class="booking-info">
+                                <div class="info-item">
+                                    <i class="fas fa-bed"></i>
+                                    <span>{{ booking.room.room_type }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>{{ booking.check_in|date:"d/m/Y" }} - {{ booking.check_out|date:"d/m/Y" }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-moon"></i>
+                                    <span>{{ booking.nights }} đêm</span>
+                                </div>
+                            </div>
+
+                            <div class="booking-price">
+                                <span class="price-label">Tổng tiền:</span>
+                                <span class="price-amount">${{ booking.total|floatformat:2 }}</span>
+                            </div>
+                        </div>
+
+                        <div class="booking-actions">
+                            <div class="action-buttons">
+                                {% if booking.is_paid %}
+                                    <a href="#" class="btn btn-secondary">
+                                        <i class="fas fa-receipt"></i>
+                                        Xem hóa đơn
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'make_payment' booking.booking_id %}" class="btn btn-primary">
+                                        <i class="fas fa-credit-card"></i>
+                                        Thanh toán ngay
+                                    </a>
+                                    <button class="btn btn-outline" onclick="showCancelModal('{{ booking.booking_id }}')">
+                                        <i class="fas fa-times"></i>
+                                        Hủy đặt phòng
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <h3>Chưa có đơn đặt phòng nào</h3>
+                    <p>Bạn chưa có đơn đặt phòng nào. Hãy khám phá và đặt phòng ngay!</p>
+                    <a href="{% url 'home' %}" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                        Tìm kiếm khách sạn
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div id="cancelModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Xác nhận hủy đặt phòng</h3>
+            <button class="modal-close" onclick="closeCancelModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn hủy đặt phòng này không?</p>
+            <p class="warning-text">
+                <i class="fas fa-exclamation-triangle"></i>
+                Hành động này không thể hoàn tác.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeCancelModal()">Không</button>
+            <form id="cancelForm" method="post" style="display: inline;">
                 {% csrf_token %}
-                <button type="submit" class="btn-cancel">Huỷ</button>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-times"></i>
+                    Xác nhận hủy
+                </button>
             </form>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-<!-- Nút Thanh toán dẫn đến booking đầu tiên -->
-<form method="get" action="{% url 'make_payment' bookings.0.booking_id %}">
-    <button type="submit" class="btn-payment">Thanh toán</button>
-</form>
+        </div>
+    </div>
+</div>
 
-{% else %}
-<p>You have no bookings.</p>
-{% endif %}
+<script>
+    function showCancelModal(bookingId) {
+        document.getElementById('cancelForm').action = `/cancel-booking/${bookingId}/`;
+        document.getElementById('cancelModal').style.display = 'flex';
+    }
+
+    function closeCancelModal() {
+        document.getElementById('cancelModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('cancelModal');
+        if (event.target === modal) {
+            closeCancelModal();
+        }
+    }
+</script>
 {% endblock %}

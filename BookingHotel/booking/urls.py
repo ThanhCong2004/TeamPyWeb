@@ -13,4 +13,12 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('register/', views.register_view, name='register'),
     path('cancel-booking/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
+
+    # === URL MỚI CHO PAYOS ===
+    path('payment-return/', views.payment_return_page, name='payment_return'),
+    path('payment-cancel/', views.payment_cancel_page, name='payment_cancel'),
+    path('payment-webhook/', views.payment_webhook_receiver, name='payment_webhook'),
+    path('search/', views.search_hotels, name='search_hotels'),
+    path('api/gemini-chat/', views.gemini_chat_view, name='gemini_chat_api'),
+
 ]

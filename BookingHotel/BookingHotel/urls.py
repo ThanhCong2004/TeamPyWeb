@@ -1,26 +1,25 @@
+# BookingHotel/urls.py (Phiên bản cuối cùng)
+
 """
 URL configuration for BookingHotel project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+... (phần comment của bạn) ...
 """
 
 from django.contrib import admin
 from django.urls import path, include
 
-urlpatterns = ([
+# BƯỚC 1: BỔ SUNG 2 DÒNG IMPORT NÀY
+from django.conf import settings
+from django.conf.urls.static import static
+
+# Đoạn urlpatterns của bạn được giữ nguyên
+urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('booking.urls')),
-])
+]
 
-
+# BƯỚC 2: BỔ SUNG KHỐI LỆNH NÀY VÀO CUỐI FILE
+if settings.DEBUG:
+    # Dòng này sẽ bảo Django phục vụ các file ảnh mà người dùng upload
+    # trong môi trường phát triển (development).
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

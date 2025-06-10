@@ -1,41 +1,153 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}Chi tiết: {{ hotel.name }}{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/hotel_detail.css' %}">
+<div class="container">
+    <div class="hotel-detail-container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">
+                <i class="fas fa-home"></i>
+                Trang chủ
+            </a>
+            <i class="fas fa-chevron-right"></i>
+            <span>{{ hotel.name }}</span>
+        </nav>
 
-<div>
-    <h2>{{ hotel.name }}</h2>
-    <p><strong>📍 Địa chỉ:</strong> {{ hotel.address }}</p>
-    <p><strong>📞 Điện thoại:</strong> {{ hotel.phone }}</p>
-    <p><strong>📧 Email:</strong> {{ hotel.email }}</p>
-    <p><strong>ℹ️ Mô tả:</strong> {{ hotel.description }}</p>
-</div>
+        <!-- Hotel Header -->
+        <div class="hotel-header">
+            <div class="hotel-title">
+                <h1>{{ hotel.name }}</h1>
+                <div class="hotel-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ hotel.address }}</span>
+                </div>
+                <div class="hotel-rating">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span class="rating-score">4.8</span>
+                    <span class="rating-text">(256 đánh giá)</span>
+                </div>
+            </div>
+        </div>
 
-<h3>Hình ảnh khách sạn:</h3>
-<div class="hotel-image-wrapper">
-    {% if pictures %}
-        {% for pic in pictures %}
-            <img src="{{ pic.image_url }}" alt="Ảnh khách sạn" class="hotel-image-full">
-        {% endfor %}
-    {% else %}
-        <p>Không có ảnh khách sạn.</p>
-    {% endif %}
-</div>
+        <!-- Image Gallery -->
+        <div class="image-gallery">
+            {% if pictures %}
+                <div class="gallery-main">
+                    <img src="{{ pictures.0.image_url }}" alt="Hình ảnh khách sạn" class="main-image">
+                </div>
+                <div class="gallery-thumbnails">
+                    {% for pic in pictures|slice:"1:5" %}
+                        <img src="{{ pic.image_url }}" alt="Hình ảnh khách sạn" class="thumbnail">
+                    {% endfor %}
+                    {% if pictures|length > 5 %}
+                        <div class="more-photos">
+                            <i class="fas fa-images"></i>
+                            <span>+{{ pictures|length|add:"-5" }} ảnh</span>
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="gallery-placeholder">
+                    <img src="{% static 'images/default-hotel.jpg' %}" alt="Chưa có ảnh">
+                </div>
+            {% endif %}
+        </div>
 
+        <!-- Hotel Info -->
+        <div class="hotel-info-section">
+            <div class="hotel-description">
+                <h2>Về khách sạn này</h2>
+                <p>{{ hotel.description }}</p>
 
-<hr>
-<h3>Danh sách phòng</h3>
-{% for room in rooms %}
-    <div class="room-block">
-        <h4><a href="{% url 'room_detail' room.room_id %}">Phòng {{ room.room_number }} - {{ room.room_type }}</a></h4>
-        <p><strong>💰 Giá:</strong> ${{ room.price_per_night }}  / đêm</p>
-        <p><strong>🧍‍♂️ Sức chứa:</strong> {{ room.max_occupancy }} người</p>
-        <p><strong>📶 Trạng thái:</strong> {{ room.status }}</p>
+                <div class="amenities">
+                    <h3>Tiện nghi nổi bật</h3>
+                    <div class="amenities-grid">
+                        <div class="amenity-item">
+                            <i class="fas fa-wifi"></i>
+                            <span>Wifi miễn phí</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fas fa-swimming-pool"></i>
+                            <span>Hồ bơi</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fas fa-car"></i>
+                            <span>Bãi đậu xe</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fas fa-utensils"></i>
+                            <span>Nhà hàng</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fas fa-dumbbell"></i>
+                            <span>Phòng gym</span>
+                        </div>
+                        <div class="amenity-item">
+                            <i class="fas fa-concierge-bell"></i>
+                            <span>Dịch vụ phòng</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Rooms -->
+        <div class="rooms-section">
+            <div class="section-header">
+                <h2>Phòng có sẵn</h2>
+                <p>Chọn phòng phù hợp với nhu cầu của bạn</p>
+            </div>
+
+            <div class="rooms-grid">
+                {% for room in rooms %}
+                <div class="room-card">
+                    <div class="room-image">
+                        <img src="{% static 'images/default-room.jpg' %}" alt="{{ room.room_type }}">
+
+                    </div>
+                    <div class="room-details">
+                        <h3>Phòng {{ room.room_number }} - {{ room.room_type }}</h3>
+                        <div class="room-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>1 giường đôi</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-users"></i>
+                                <span>2 khách</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span>25m²</span>
+                            </div>
+                        </div>
+                        <div class="room-price">
+                            <span class="price-amount">${{ room.price_per_night }}</span>
+                            <span class="price-unit">/đêm</span>
+                        </div>
+                        <a href="{% url 'room_detail' room.room_id %}" class="book-btn">
+                            <i class="fas fa-calendar-check"></i>
+                            Đặt ngay
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="no-rooms">
+                    <i class="fas fa-bed"></i>
+                    <h3>Hiện không có phòng trống</h3>
+                    <p>Vui lòng thử lại vào thời gian khác hoặc liên hệ trực tiếp với khách sạn</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
-  <br>
-{% empty %}
-    <p>Không có phòng nào trong khách sạn này.</p>
-{% endfor %}
-
+</div>
 {% endblock %}
-

@@ -1,14 +1,79 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
-<link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% block title %}Đăng ký{% endblock %}
 
-<div class="register-form">
-    <h2>Register</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn-success">Đăng ký</button>
-    </form>
+{% block content %}
+<div class="auth-container">
+    <div class="auth-content">
+        <!-- Auth Header -->
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="fas fa-hotel"></i>
+                <span>HotelBooking</span>
+            </div>
+            <h1>Đăng ký tài khoản</h1>
+            <p>Tạo tài khoản để trải nghiệm dịch vụ tốt nhất</p>
+        </div>
+
+        <!-- Register Form -->
+        <div class="auth-form">
+            <form method="post" class="form">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+
+
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-user-plus"></i>
+                    Tạo tài khoản
+                </button>
+            </form>
+
+            <!-- Social Register -->
+            <div class="social-login">
+                <div class="divider">
+                    <span>Hoặc đăng ký với</span>
+                </div>
+                <div class="social-buttons">
+                    <button class="social-btn google">
+                        <i class="fab fa-google"></i>
+                        Google
+                    </button>
+                    <button class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i>
+                        Facebook
+                    </button>
+                </div>
+            </div>
+
+            <!-- Login Link -->
+            <div class="auth-footer">
+                <p>Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập ngay</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Image -->
+    <div class="auth-image">
+        <div class="image-overlay">
+            <h2>Bắt đầu hành trình của bạn</h2>
+            <p>Tham gia cộng đồng hàng triệu du khách trên toàn thế giới</p>
+            <div class="features-list">
+                <div class="feature">
+                    <i class="fas fa-check"></i>
+                    <span>Đặt phòng dễ dàng</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-check"></i>
+                    <span>Giá cả cạnh tranh</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-check"></i>
+                    <span>Hỗ trợ 24/7</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -1,10 +1,130 @@
 {% extends 'base.html' %}
-{% block title %}Đặt phòng{% endblock %}
+{% load static %}
+{% block title %}Đặt phòng thành công{% endblock %}
+
 {% block content %}
-<h2>Đặt phòng thành công!</h2>
-<p>Phòng: {{ booking.room.room_type }}</p>
-<p>Ngày đến: {{ booking.check_in }}</p>
-<p>Ngày đi: {{ booking.check_out }}</p>
-<p>Tổng tiền: {{ booking.total }}</p>
-<a href="{% url 'payment' booking.booking_id %}">Thanh toán</a>
+<div class="container">
+    <div class="booking-success-container">
+        <!-- Success Header -->
+        <div class="success-header">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1>Đặt phòng thành công!</h1>
+            <p>Cảm ơn bạn đã tin tưởng và sử dụng dịch vụ của chúng tôi</p>
+        </div>
+
+        <!-- Booking Details -->
+        <div class="booking-details">
+            <div class="booking-card">
+                <div class="card-header">
+                    <h2>Thông tin đặt phòng</h2>
+                    <div class="booking-id">
+                        <span>Mã đặt phòng: #{{ booking.booking_id }}</span>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <div class="hotel-info">
+                        <div class="hotel-image">
+                            <img src="{% static 'images/default-hotel.jpg' %}" alt="{{ booking.room.hotel.name }}">
+                        </div>
+                        <div class="hotel-details">
+                            <h3>{{ booking.room.hotel.name }}</h3>
+                            <p class="hotel-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ booking.room.hotel.address }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="booking-info">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <i class="fas fa-bed"></i>
+                                <div>
+                                    <span class="label">Loại phòng</span>
+                                    <span class="value">{{ booking.room.room_type }}</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <div>
+                                    <span class="label">Ngày nhận phòng</span>
+                                    <span class="value">{{ booking.check_in|date:"d/m/Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-row">
+                            <div class="info-item">
+                                <i class="fas fa-calendar-times"></i>
+                                <div>
+                                    <span class="label">Ngày trả phòng</span>
+                                    <span class="value">{{ booking.check_out|date:"d/m/Y" }}</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-users"></i>
+                                <div>
+                                    <span class="label">Số khách</span>
+                                    <span class="value">2 người lớn</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="total-section">
+                            <div class="total-row">
+                                <span class="total-label">Tổng tiền:</span>
+                                <span class="total-amount">${{ booking.total }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Information -->
+            <div class="info-card">
+                <h3>
+                    <i class="fas fa-info-circle"></i>
+                    Thông tin quan trọng
+                </h3>
+                <ul class="info-list">
+                    <li>
+                        <i class="fas fa-clock"></i>
+                        Thời gian nhận phòng: 14:00 - Thời gian trả phòng: 12:00
+                    </li>
+                    <li>
+                        <i class="fas fa-id-card"></i>
+                        Vui lòng mang theo CMND/CCCD khi làm thủ tục nhận phòng
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        Liên hệ khách sạn: {{ booking.room.hotel.phone|default:"Đang cập nhật" }}
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        Email xác nhận đã được gửi đến hộp thư của bạn
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'payment' booking.booking_id %}" class="btn btn-primary">
+                    <i class="fas fa-credit-card"></i>
+                    Thanh toán ngay
+                </a>
+                <a href="{% url 'my_bookings' %}" class="btn btn-secondary">
+                    <i class="fas fa-list"></i>
+                    Xem tất cả đặt phòng
+                </a>
+                <a href="{% url 'home' %}" class="btn btn-outline">
+                    <i class="fas fa-home"></i>
+                    Về trang chủ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

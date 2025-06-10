@@ -12,7 +12,7 @@ class SearchForm(forms.Form):
         ('', '--- Chọn thành phố ---'),
         ('Hà Nội', 'Hà Nội'),
         ('Đà Nẵng', 'Đà Nẵng'),
-        ('TPHCM', 'TPHCM'),
+        ('TP.HCM', 'TP.HCM'),
     ]
 
     city = forms.ChoiceField(

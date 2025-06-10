@@ -3,30 +3,197 @@
 {% block title %}Đặt phòng{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/book_room.css' %}">
+<div class="container">
+    <div class="booking-container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">
+                <i class="fas fa-home"></i>
+                Trang chủ
+            </a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{% url 'hotel_detail' room.hotel.hotel_id %}">{{ room.hotel.name }}</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Đặt phòng</span>
+        </nav>
 
-<div class="book-room-container">
-    <h2>Đặt Phòng</h2>
+        <div class="booking-content">
+            <!-- Room Summary -->
+            <div class="room-summary">
+                <div class="summary-header">
+                    <h2>Xác nhận đặt phòng</h2>
+                    <div class="booking-step">
+                        <span class="step active">1</span>
+                        <span class="step-text">Thông tin đặt phòng</span>
+                    </div>
+                </div>
 
-    <p><strong>Khách sạn:</strong> {{ room.hotel.name }}</p>
-    <p><strong>Phòng:</strong> {{ room.room_number }} {{ room.room_type }} - ${{ room.price_per_night }}/đêm</p>
+                <div class="hotel-info">
+                    <div class="hotel-image">
+                        <img src="{% static 'images/default-hotel.jpg' %}" alt="{{ room.hotel.name }}">
+                    </div>
+                    <div class="hotel-details">
+                        <h3>{{ room.hotel.name }}</h3>
+                        <p class="hotel-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ room.hotel.address }}
+                        </p>
+                        <div class="room-info">
+                            <h4>{{ room.room_type }}</h4>
+                            <div class="room-features">
+                                <span class="feature">
+                                    <i class="fas fa-bed"></i>
+                                    1 giường đôi
+                                </span>
+                                <span class="feature">
+                                    <i class="fas fa-users"></i>
+                                    2 khách
+                                </span>
+                            </div>
+                            <div class="room-price">
+                                <span class="price-amount">${{ room.price_per_night }}</span>
+                                <span class="price-unit">/đêm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="check_in">Ngày nhận phòng:</label>
-            <input type="date" name="check_in" id="check_in" required>
+            <!-- Booking Form -->
+            <div class="booking-form">
+                {% if error %}
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                {% endif %}
+
+                <form method="post" class="form">
+                    {% csrf_token %}
+                    <div class="form-section">
+                        <h3>Chi tiết đặt phòng</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_check_in">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Ngày nhận phòng
+                                </label>
+                                <input type="date" name="check_in" id="id_check_in" required class="form-control">
+                                <small class="form-help">Thời gian nhận phòng: 14:00</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_check_out">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Ngày trả phòng
+                                </label>
+                                <input type="date" name="check_out" id="id_check_out" required class="form-control">
+                                <small class="form-help">Thời gian trả phòng: 12:00</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_guests">
+                                <i class="fas fa-users"></i>
+                                Số khách
+                            </label>
+                            <select name="guests" id="id_guests" class="form-control">
+                                <option value="1">1 khách</option>
+                                <option value="2" selected>2 khách</option>
+                                <option value="3">3 khách</option>
+                                <option value="4">4 khách</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_special_requests">
+                                <i class="fas fa-comment"></i>
+                                Yêu cầu đặc biệt (tùy chọn)
+                            </label>
+                            <textarea name="special_requests" id="id_special_requests" rows="3" class="form-control" placeholder="Ví dụ: Phòng tầng cao, giường đôi, không hút thuốc..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Thông tin liên hệ</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_full_name">
+                                    <i class="fas fa-user"></i>
+                                    Họ và tên
+                                </label>
+                                <input type="text" name="full_name" id="id_full_name" required class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_phone">
+                                    <i class="fas fa-phone"></i>
+                                    Số điện thoại
+                                </label>
+                                <input type="tel" name="phone" id="id_phone" required class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_email">
+                                <i class="fas fa-envelope"></i>
+                                Email
+                            </label>
+                            <input type="email" name="email" id="id_email" required class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="booking-summary">
+                        <div class="summary-row">
+                            <span>Giá phòng/đêm:</span>
+                            <span>${{ room.price_per_night }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Số đêm:</span>
+                            <span id="nights-count">-</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Tổng cộng:</span>
+                            <span id="total-price">-</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-credit-card"></i>
+                        Xác nhận & Tiếp tục thanh toán
+                    </button>
+                </form>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="check_out">Ngày trả phòng:</label>
-            <input type="date" name="check_out" id="check_out" required>
-        </div>
-
-        <div class="button-group">
-            <a href="{% url 'room_detail' room.room_id %}" class="btn-back">← Quay lại</a>
-            <button type="submit" class="btn-book">Đặt ngay</button>
-        </div>
-    </form>
+    </div>
 </div>
+
+<script>
+    // Calculate total price based on dates
+    function calculateTotal() {
+        const checkIn = document.getElementById('id_check_in').value;
+        const checkOut = document.getElementById('id_check_out').value;
+        const pricePerNight = {{ room.price_per_night }};
+
+        if (checkIn && checkOut) {
+            const startDate = new Date(checkIn);
+            const endDate = new Date(checkOut);
+            const timeDiff = endDate.getTime() - startDate.getTime();
+            const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+            if (nights > 0) {
+                document.getElementById('nights-count').textContent = nights + ' đêm';
+                document.getElementById('total-price').textContent = '$' + (nights * pricePerNight);
+            }
+        }
+    }
+
+    document.getElementById('id_check_in').addEventListener('change', calculateTotal);
+    document.getElementById('id_check_out').addEventListener('change', calculateTotal);
+
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('id_check_in').setAttribute('min', today);
+    document.getElementById('id_check_out').setAttribute('min', today);
+</script>
 {% endblock %}

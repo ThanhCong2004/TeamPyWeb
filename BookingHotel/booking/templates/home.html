@@ -1,37 +1,158 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Danh sách khách sạn{% endblock %}
-{% block content %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
-<!-- <img src="{% static 'images/hotel1.png' %}" alt="Hotel Image" class="hotel-image">  Nếu muốn link ảnh -->
-<div class="search">
-<h2>Tìm kiếm khách sạn</h2>
-<form method="get" class="search-form">
-    {{ form.as_p }}
-    <button type="submit" class="btn-payment">Tìm kiếm</button>
-</form>
-</div>
-{% for hotel in hotels %}
-        <div class="hotel-info">
+{% block title %}Tìm & Đặt phòng khách sạn giá tốt nhất{% endblock %}
 
-            <h3><a href="{% url 'hotel_detail' hotel.hotel_id %}">{{ hotel.name }}</a></h3>
-            <p><strong>📍 Địa chỉ:</strong> {{ hotel.address }}</p>
-            <p><strong>📞 Điện thoại:</strong> {{ hotel.phone }}</p>
-            <p><strong>📧 Email:</strong> {{ hotel.email }}</p>
-            <p><strong>ℹ️ Mô tả:</strong> {{ hotel.description }}</p>
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-background">
+        <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>Khám phá thế giới cùng chúng tôi</h1>
+            <p>Tìm kiếm và đặt phòng khách sạn tốt nhất với giá ưu đãi</p>
         </div>
-{% empty %}
-    <p>Không tìm thấy khách sạn phù hợp.</p>
-{% endfor %}
-<!--Phân trang-->
-<div class="pagination">
-  {% if hotels.has_previous %}
-    <a href="?page={{ hotels.previous_page_number }}">← Trước</a>
-  {% endif %}
-  <span>Trang {{ hotels.number }} / {{ hotels.paginator.num_pages }}</span>
-  {% if hotels.has_next %}
-    <a href="?page={{ hotels.next_page_number }}" >Tiếp →</a>
-  {% endif %}
+
+        <!-- Search Box -->
+        <div class="search-container">
+            <form method="get" class="search-form">
+                <div class="search-grid">
+                    <div class="search-field">
+                        <label><i class="fas fa-search"></i> {{ form.keyword.label }}</label>
+                        {{ form.keyword }}
+                    </div>
+                    <div class="search-field">
+                        <label><i class="fas fa-map-marker-alt"></i> {{ form.city.label }}</label>
+                        {{ form.city }}
+                    </div>
+                </div>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                    <span>Tìm kiếm</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Featured Hotels Section -->
+    <section class="hotels-section">
+        <div class="section-header">
+            <h2>Khách sạn nổi bật</h2>
+            <p>Khám phá những khách sạn được đánh giá cao nhất</p>
+        </div>
+
+        <div class="hotels-grid">
+            {% for hotel in hotels %}
+            <a href="{% url 'hotel_detail' hotel.hotel_id %}" class="hotel-card">
+                <div class="hotel-image">
+                    {# Giả sử bạn có một trường 'image_url' trong model Picture liên quan đến Hotel #}
+                    {# Nếu không, bạn cần điều chỉnh logic này cho phù hợp với model của bạn #}
+                    {% with hotel.picture_set.first as picture %}
+                        {% if picture and picture.image_url %}
+                            <img src="{{ picture.image_url }}" alt="{{ hotel.name }}">
+                        {% else %}
+                            <img src="{% static 'images/default-hotel.jpg' %}" alt="{{ hotel.name }}">
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="hotel-info">
+                    <h3>{{ hotel.name }}</h3>
+
+                    <p class="hotel-location">
+                        <i class="fas fa-map-marker-alt" style="color:red"></i>
+                        {{ hotel.address }}
+                    </p>
+
+                    <p class="hotel-description">{{ hotel.description|truncatewords:20 }}</p>
+
+                    <div class="hotel-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+
+                    {# Hiển thị giá từ phòng rẻ nhất #}
+                    {% with hotel.room_set.all|first as first_room %}
+                        {% if first_room %}
+                            <div class="hotel-price">
+                                <span  class="price-unit">Từ</span>
+                                <span class="price-from">{{ first_room.price_per_night|floatformat:0 }}$</span>
+                                <span class="price-unit">/đêm</span>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </a>
+            {% empty %}
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>Không tìm thấy khách sạn</h3>
+                <p>Thử thay đổi tiêu chí tìm kiếm của bạn</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+<!-- Phân trang (nếu có) -->
+{% if hotels.has_other_pages %}
+<div class="container">
+    <nav class="pagination-nav">
+        <div class="pagination">
+            {% if hotels.has_previous %}
+            <a href="?page={{ hotels.previous_page_number }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.city %}&city={{ request.GET.city }}{% endif %}" class="pagination-btn">
+                <i class="fas fa-chevron-left"></i> Trước
+            </a>
+            {% endif %}
+
+            <span class="pagination-info">
+                Trang {{ hotels.number }} / {{ hotels.paginator.num_pages }}
+            </span>
+
+            {% if hotels.has_next %}
+            <a href="?page={{ hotels.next_page_number }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.city %}&city={{ request.GET.city }}{% endif %}" class="pagination-btn">
+                Sau <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </nav>
 </div>
+{% endif %}
+<br>
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="section-header">
+            <h2>Tại sao chọn chúng tôi?</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Đảm bảo giá tốt nhất</h3>
+                <p>Cam kết mang đến giá cả cạnh tranh nhất thị trường</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-clock"></i></div>
+                <h3>Hỗ trợ 24/7</h3>
+                <p>Đội ngũ chăm sóc khách hàng luôn sẵn sàng hỗ trợ bạn</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-thumbs-up"></i></div>
+                <h3>Đặt phòng dễ dàng</h3>
+                <p>Giao diện thân thiện, quy trình đặt phòng nhanh chóng</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+{# Dòng quan trọng để chèn chatbot vào trang #}
+{% include '_chatbot_include.html' %}
 
 {% endblock %}

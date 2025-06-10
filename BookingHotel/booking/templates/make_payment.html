@@ -1,22 +1,196 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %}Thanh toán{% endblock %}
+
 {% block content %}
-<h2>Thanh toán</h2>
+<div class="container">
+    <div class="payment-container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">
+                <i class="fas fa-home"></i>
+                Trang chủ
+            </a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{% url 'my_bookings' %}">Đơn đặt phòng</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Thanh toán</span>
+        </nav>
 
-<p><strong>Khách sạn:</strong> {{ booking.room.hotel.name }}</p>
-<p><strong>Phòng:</strong> {{ booking.room.room_type }}</p>
-<p><strong>Check-in:</strong> {{ booking.check_in }}</p>
-<p><strong>Check-out:</strong> {{ booking.check_out }}</p>
-<p><strong>Tổng tiền:</strong> ${{ booking.total }} </p>
+        <div class="payment-content">
+            <!-- Payment Header -->
+            <div class="payment-header">
+                <div class="payment-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h1>Thanh toán đặt phòng</h1>
+                <p>Hoàn tất thanh toán để xác nhận đặt phòng của bạn</p>
+            </div>
 
-<form method="post">
-    {% csrf_token %}
-    <label for="payment_method">Phương thức thanh toán:</label>
-    <select name="payment_method" id="payment_method" required>
-        <option value="Thẻ tín dụng">Thẻ tín dụng</option>
-        <option value="Chuyển khoản">Chuyển khoản</option>
-        <option value="Tiền mặt">Tiền mặt</option>
-    </select>
-    <br><br>
-    <button type="submit" class="btn-payment">Xác nhận thanh toán</button>
-</form>
+            <div class="payment-layout">
+                <!-- Booking Summary -->
+                <div class="booking-summary">
+                    <div class="summary-card">
+                        <h3>
+                            <i class="fas fa-receipt"></i>
+                            Chi tiết đơn hàng
+                        </h3>
+
+                        <div class="hotel-info">
+                            <div class="hotel-image">
+                                <img src="{% static 'images/default-hotel.jpg' %}" alt="{{ booking.room.hotel.name }}">
+                            </div>
+                            <div class="hotel-details">
+                                <h4>{{ booking.room.hotel.name }}</h4>
+                                <p class="hotel-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    {{ booking.room.hotel.address }}
+                                </p>
+                                <p class="room-type">{{ booking.room.room_type }}</p>
+                            </div>
+                        </div>
+
+                        <div class="booking-details">
+                            <div class="detail-row">
+                                <span class="label">Mã đặt phòng:</span>
+                                <span class="value">#{{ booking.booking_id }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Ngày nhận phòng:</span>
+                                <span class="value">{{ booking.check_in|date:"d/m/Y" }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Ngày trả phòng:</span>
+                                <span class="value">{{ booking.check_out|date:"d/m/Y" }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Số khách:</span>
+                                <span class="value">2 người lớn</span>
+                            </div>
+                        </div>
+
+                        <div class="price-summary">
+                            <div class="price-row total">
+                                <span>Tổng tiền thanh toán:</span>
+                                <span class="total-amount">${{ booking.total }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <div class="payment-form">
+                    <div class="form-card">
+                        <h3>
+                            <i class="fas fa-wallet"></i>
+                            Chọn phương thức thanh toán
+                        </h3>
+
+                        <form method="post" class="payment-methods">
+                            {% csrf_token %}
+
+                            <div class="payment-option">
+                                <input type="radio" id="credit_card" name="payment_method" value="Credit Card" checked>
+                                <label for="credit_card" class="payment-label">
+                                    <div class="payment-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>Thẻ tín dụng/Ghi nợ</h4>
+                                        <p>Visa, Mastercard, JCB được chấp nhận</p>
+                                    </div>
+                                    <div class="payment-check">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="payment-option">
+                                <input type="radio" id="momo" name="payment_method" value="Momo">
+                                <label for="momo" class="payment-label">
+                                    <div class="payment-icon">
+                                        <i class="fas fa-mobile-alt"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>Ví MoMo</h4>
+                                        <p>Thanh toán nhanh chóng qua ví điện tử</p>
+                                    </div>
+                                    <div class="payment-check">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="payment-option">
+                                <input type="radio" id="bank_transfer" name="payment_method" value="Bank Transfer">
+                                <label for="bank_transfer" class="payment-label">
+                                    <div class="payment-icon">
+                                        <i class="fas fa-university"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>Chuyển khoản ngân hàng</h4>
+                                        <p>Chuyển khoản trực tiếp qua ngân hàng</p>
+                                    </div>
+                                    <div class="payment-check">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="payment-option">
+                                <input type="radio" id="vietqr_payos" name="payment_method" value="vietqr_payos">
+                                <label for="vietqr_payos" class="payment-label">
+                                    <div class="payment-icon">
+                                        <i class="fas fa-qrcode"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>VietQR (PayOS)</h4>
+                                        <p>Thanh toán nhanh chóng qua mã QR</p>
+                                    </div>
+                                    <div class="payment-check">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="payment-security">
+                                <div class="security-info">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Giao dịch được bảo mật với SSL 256-bit</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="payment-btn">
+                                <i class="fas fa-lock"></i>
+                                Thanh toán ${{ booking.total }}
+                            </button>
+                        </form>
+
+                        {% if success %}
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i>
+                                <span>{{ success }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Payment method selection
+    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            this.closest('.payment-option').classList.add('selected');
+        });
+    });
+
+    // Set initial selection
+    document.querySelector('.payment-option').classList.add('selected');
+</script>
 {% endblock %}

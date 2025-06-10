@@ -2,39 +2,119 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Khách Sạn{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HotelBooking - Đặt phòng khách sạn{% endblock %}</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <nav>
-    <div><a href="{% url 'home' %}" style="font-weight: 700; font-size: 1.2rem;">🏨 HotelBooking</a></div>
-    <div>
-        {% if request.session.user_id %}
-            <a href="{% url 'profile' %}">Thông tin</a>
-            <a href="{% url 'my_bookings' %}">Đơn đặt</a>
-            <a href="{% url 'logout' %}">Đăng xuất</a>
-        {% else %}
-            <a href="{% url 'login' %}">Đăng nhập</a>
-            <a href="{% url 'register' %}">Đăng ký</a>
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">
+                <i class="fas fa-hotel"></i>
+                <span>HotelBooking</span>
+            </a>
+            <nav class="nav-links">
+                {% if request.session.user_id %}
+                    <a href="{% url 'profile' %}" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        <span>Thông tin</span>
+                    </a>
+                    <a href="{% url 'my_bookings' %}" class="nav-link">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Đơn đặt</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="nav-link logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Đăng xuất</span>
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Đăng nhập</span>
+                    </a>
+                    <a href="{% url 'register' %}" class="nav-link register-btn">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Đăng ký</span>
+                    </a>
+                {% endif %}
+            </nav>
+            <button class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        {% if messages %}
+            <div class="messages-overlay">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }}">
+                        <i class="fas fa-info-circle"></i>
+                        <span>{{ message }}</span>
+                        <button class="alert-close">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
-    </div>
-    </nav>
 
-    <!--Thông báo nếu có(Đặt phòng thành công/thất bại)-->
-    {% if messages %}
-      <ul class="messages">
-        {% for message in messages %}
-          <li class="alert">{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-
-
-    <div class="content">
         {% block content %}{% endblock %}
-    </div>
+    </main>
 
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>HotelBooking</h4>
+                    <p>Nền tảng đặt phòng khách sạn hàng đầu Việt Nam</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liên kết</h4>
+                    <ul>
+                        <li><a href="#">Về chúng tôi</a></li>
+                        <li><a href="#">Điều khoản</a></li>
+                        <li><a href="#">Chính sách</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Hỗ trợ</h4>
+                    <ul>
+                        <li><a href="#">Trung tâm trợ giúp</a></li>
+                        <li><a href="#">Liên hệ</a></li>
+                        <li><a href="#">Hotline: 1900-xxxx</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 HotelBooking. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
 
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Alert close functionality
+        document.querySelectorAll('.alert-close').forEach(button => {
+            button.addEventListener('click', function() {
+                this.parentElement.style.display = 'none';
+            });
+        });
+
+        // Auto hide alerts after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.style.display = 'none', 300);
+            });
+        }, 5000);
+    </script>
 </body>
 </html>
